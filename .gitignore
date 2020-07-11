@@ -1,0 +1,12 @@
+/data
+/processed_data
+/processed_data_1
+/static
+/raw_data
+db.conf
+train_img_data_*.pkl
+test_img_data_1.pkl
+valid_img_data_1.pkl
+/.idea
+/__pycache__
+/models

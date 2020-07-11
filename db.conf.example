@@ -1,0 +1,6 @@
+[database]
+dbhost = xxx.xxx.xxx.xxx
+dbport = 3366
+user = xxx
+password = xxxx
+dbname = flower
