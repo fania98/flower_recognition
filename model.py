@@ -60,28 +60,28 @@ class googleLenetModel:
                                            dropout_keep_prob=self.keep_prob,is_training=self.is_training)
         return out
 
-    def vgg_layer(self):
-        conv1 = self.conv_layer([3,3,1,64],[64],self.img_input_expand,1) #222*222*64
-        conv2 = self.conv_layer([3,3,64,64],[64],conv1,2) ##220*220*64
-        pool1 = tf.nn.max_pool(conv2, [1, 2, 2, 1], strides=[1, 2, 2, 1], padding='VALID') #110*110*64
-        conv3 = self.conv_layer([3, 3, 64, 128], [128], pool1, 3) #108*108*128
-        conv4 = self.conv_layer([3,3,128,128],[128], conv3, 4) #106*106*128
-        pool2 = tf.nn.max_pool(conv4, [1, 2, 2, 1], strides=[1, 2, 2, 1], padding='VALID')#53*53*128
-        conv5 = self.conv_layer([3,3,128,256],[256],pool2, 5) #51*51*256
-        conv6 = self.conv_layer([3,3,256,256],[256], conv5, 6) #49*49*256
-        pool3 = tf.nn.max_pool(conv6, [1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')  # 25*25*256
-        conv7 = self.conv_layer([3, 3, 256, 256], [256], pool3, 5)  # 23*23*256
-        conv8 = self.conv_layer([3, 3, 256, 256], [256], conv7, 6)  # 21*21*256
-        pool4 = tf.nn.max_pool(conv8, [1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')  # 11*11*256
-        conv9 = self.conv_layer([3, 3, 256, 256], [256], pool4, 5)  # 9*9*256
-        conv10 = self.conv_layer([3, 3, 256, 256], [256], conv9, 6)  # 7*7*256
-        pool5 = tf.nn.max_pool(conv10, [1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')  # 4*4*256
-
-        flat = tf.reshape(pool5,[-1,4*4*256])
-        wfc = self.get_variable([4*4*256,1000],"vgg_fc_w")
-        bfc = self.get_variable([1000], "vgg_fc_b")
-        out = tf.nn.relu(tf.matmul(flat, wfc)+bfc)
-        return out
+    # def vgg_layer(self):
+    #     conv1 = self.conv_layer([3,3,1,64],[64],self.img_input_expand,1) #222*222*64
+    #     conv2 = self.conv_layer([3,3,64,64],[64],conv1,2) ##220*220*64
+    #     pool1 = tf.nn.max_pool(conv2, [1, 2, 2, 1], strides=[1, 2, 2, 1], padding='VALID') #110*110*64
+    #     conv3 = self.conv_layer([3, 3, 64, 128], [128], pool1, 3) #108*108*128
+    #     conv4 = self.conv_layer([3,3,128,128],[128], conv3, 4) #106*106*128
+    #     pool2 = tf.nn.max_pool(conv4, [1, 2, 2, 1], strides=[1, 2, 2, 1], padding='VALID')#53*53*128
+    #     conv5 = self.conv_layer([3,3,128,256],[256],pool2, 5) #51*51*256
+    #     conv6 = self.conv_layer([3,3,256,256],[256], conv5, 6) #49*49*256
+    #     pool3 = tf.nn.max_pool(conv6, [1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')  # 25*25*256
+    #     conv7 = self.conv_layer([3, 3, 256, 256], [256], pool3, 5)  # 23*23*256
+    #     conv8 = self.conv_layer([3, 3, 256, 256], [256], conv7, 6)  # 21*21*256
+    #     pool4 = tf.nn.max_pool(conv8, [1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')  # 11*11*256
+    #     conv9 = self.conv_layer([3, 3, 256, 256], [256], pool4, 5)  # 9*9*256
+    #     conv10 = self.conv_layer([3, 3, 256, 256], [256], conv9, 6)  # 7*7*256
+    #     pool5 = tf.nn.max_pool(conv10, [1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')  # 4*4*256
+    #
+    #     flat = tf.reshape(pool5,[-1,4*4*256])
+    #     wfc = self.get_variable([4*4*256,1000],"vgg_fc_w")
+    #     bfc = self.get_variable([1000], "vgg_fc_b")
+    #     out = tf.nn.relu(tf.matmul(flat, wfc)+bfc)
+    #     return out
 
 
     def conv_layer(self,wshape,bshape,input,num):
@@ -167,10 +167,6 @@ def test():
     model_path = "models/best_models_27_0_0.7128_1024_512.ckpt"
     saver = tf.train.import_meta_graph(model_path+".meta")  # 加载图结构
     graph = tf.get_default_graph()
-    # tensor_name_list = [tensor.name for tensor in graph.as_graph_def().node]
-    # with open("name.txt",'w+')as f:
-    #     for n in tensor_name_list:
-    #         f.write(n+"\n")
     img_input = graph.get_tensor_by_name("input:0")
     label_id = graph.get_tensor_by_name("label:0")
     keep_prob = graph.get_tensor_by_name("keep_prob:0")
@@ -179,7 +175,6 @@ def test():
     test_batch = generate_stochastic_test_batch(100, False)
     test_accuracy = []
     with tf.Session() as sess:
-        #ckpt = tf.train.get_checkpoint_state('models/')
         saver.restore(sess,"models/best_models_27_0_0.7128_1024_512.ckpt")
         for batch in test_batch:
             (v_img_batch, v_label_batch) = batch
@@ -187,10 +182,8 @@ def test():
                                                  keep_prob: 1, is_train: False})
             test_accuracy.append(acc)
             print(acc)
-            #valid_loss.append(sess.run(self.loss, feed_dict={self.img_input: v_img_batch, self.label_id: v_label_batch, self.keep_prob: 1}))
 
         mean_acc = np.array(test_accuracy, dtype=np.float32).mean()
-       # mean_loss = np.array(valid_loss, dtype=np.float32).mean()
     print(mean_acc)
 
 

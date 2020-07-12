@@ -5,7 +5,7 @@ import numpy as np
 import pickle
 import cv2
 import re
-#from db_connection import get_connection
+from db_connection import get_connection
 def generate_name_label(data_type):
     img_names = []
     for d in os.listdir("processed_data/"+data_type):
@@ -53,13 +53,10 @@ def generate_stochastic_valid_batch(size, israndom=False):
     if israndom:
         random.shuffle(img_data)
     for img in img_data:
-        # print(img)
         cur_train_batch[cur_num]=img['data']/256
         cur_label[cur_num] = img['label']
         cur_num += 1
         if cur_num==size:
-            # print(cur_train_batch)
-            # print(cur_label)
             yield (cur_train_batch,cur_label)
             cur_num = 0
             cur_train_batch = np.zeros((size, 224, 224, 3))
@@ -76,13 +73,10 @@ def generate_stochastic_test_batch(size, israndom=False):
     if israndom:
         random.shuffle(img_data)
     for img in img_data:
-        # print(img)
         cur_train_batch[cur_num]=img['data']/256
         cur_label[cur_num] = img['label']
         cur_num += 1
         if cur_num==size:
-            # print(cur_train_batch)
-            # print(cur_label)
             yield (cur_train_batch,cur_label)
             cur_num = 0
             cur_train_batch = np.zeros((size, 224, 224, 3))
@@ -122,7 +116,6 @@ def generate_batch(size):
                 img_urls.append(os.path.join("static", "jpg", img_original_name))
                 cur_num += 1
                 if cur_num == size:
-                    #print(img_urls)
                     yield (cur_train_batch, cur_label, img_urls)
                     cur_num = 0
                     cur_train_batch = np.zeros((size, 224, 224, 3))

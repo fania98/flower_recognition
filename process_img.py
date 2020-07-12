@@ -43,6 +43,11 @@ from db_connection import get_connection
 
 
 def process(img):
+    """
+    given an image, generate feature vector and hash code and search for the nearest image in the image database
+    :param img:
+    :return: the searched image path and image class
+    """
     num=10
     img = np.frombuffer(img, dtype=np.uint8)
     img = cv2.imdecode(img, cv2.COLOR_BGR2GRAY)

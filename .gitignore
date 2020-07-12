@@ -10,3 +10,4 @@ valid_img_data_1.pkl
 /.idea
 /__pycache__
 /models
+store_flower_info.py
